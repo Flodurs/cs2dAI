@@ -5,7 +5,7 @@ import numpy as np
 import random
 
 class baseAgent:
-    def __init__(self,pos,rot):
+    def __init__(self,pos = np.array([400.0,400.0]),rot = 0):
         random.seed()
         #physics
         self.size = 40
@@ -23,7 +23,7 @@ class baseAgent:
         self.viewRange = 800
         
         #thinking
-        self.nodeNum = nodeNum
+     
         self.marked = 0
         
         self.range = 800
@@ -121,7 +121,7 @@ class baseAgent:
             px=self.pos[0]+i*direction[0]*samplingDist
             py=self.pos[1]+i*direction[1]*samplingDist
             for wall in world.getWalls():
-                if geometry.pointInRect(px,py,wall):
+                if cs2d.geometry.pointInRect(px,py,wall):
                     return np.linalg.norm(np.array([px,py])-self.pos)
         return -1
         
@@ -132,7 +132,7 @@ class baseAgent:
             px=self.pos[0]+i*direction[0]*samplingDist
             py=self.pos[1]+i*direction[1]*samplingDist
             for wall in world.getWalls():
-                if geometry.pointInRect(px,py,wall):
+                if cs2d.geometry.pointInRect(px,py,wall):
                     return(np.linalg.norm(np.array([px,py])-self.pos))
     
         return float('inf')
@@ -145,7 +145,7 @@ class baseAgent:
             py=self.pos[1]+i*direction[1]*samplingDist
             for ag in world.getAgents():
                 #print(ag.getRect())
-                if geometry.pointInRect(px,py,ag.getRect()):
+                if cs2d.geometry.pointInRect(px,py,ag.getRect()):
                     
                     agentDist=np.linalg.norm(np.array([px,py])-self.pos)
                     
@@ -184,7 +184,7 @@ class baseAgent:
         
         
         for i,ray in enumerate(self.viewRayAngles):
-            rayCastResult = self.rayCastWallandAgents(geometry.angleToVec(self.rotation+ray), self.viewRange, world)
+            rayCastResult = self.rayCastWallandAgents(cs2d.geometry.angleToVec(self.rotation+ray), self.viewRange, world)
             
         
             self.viewList[i][0] = rayCastResult[1]
@@ -203,7 +203,7 @@ class baseAgent:
     def getViewRayDirections(self):
         directions = []
         for angle in self.viewRayAngles:
-            directions.append(geometry.angleToVec(self.rotation+angle))
+            directions.append(cs2d.geometry.angleToVec(self.rotation+angle))
         return directions
         
     #--------------------------------------------------AI-----------------------------------------------------
@@ -282,6 +282,28 @@ class baseAgent:
             
         if outputs[6] > 0.5:
             self.shoot(world)
+            
+            
+    def executeAction(self,a):
+        acc = np.array([0.0,0.0])
+        if a == 0:
+            #print("up")
+            acc += np.array([0.0,-1.0])
+            
+        if a == 1:
+            #print("down")
+            acc += np.array([0.0,1.0])
+            
+        if a == 2:
+            #print("left")
+            acc += np.array([-1.0,0.0])
+            
+        if a == 3:
+            #print("right")
+            acc += np.array([1.0,0.0])
+            
+        self.vel+=np.matmul(np.array([[math.cos(self.rotation),math.sin(self.rotation)],[-math.sin(self.rotation),math.cos(self.rotation)]]),acc)
+        self.vel = self.normalize(self.vel)
             
     #---------------------------combat mechanics-------------------------------------------
     

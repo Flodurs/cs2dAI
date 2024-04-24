@@ -87,7 +87,7 @@ class zeichner:
         for ag in agents:
             
            
-            pygame.draw.line(self.screen, (0,0,0), ag.getPos(), ag.getPos()+ag.getFacingVector()*25, 2)
+            pygame.draw.line(self.canvas, (0,0,0), ag.getPos(), ag.getPos()+ag.getFacingVector()*25, 2)
             
             ranges = ag.getViewList()
             #print(ranges)
@@ -95,22 +95,22 @@ class zeichner:
                 if ranges[i][1] == -1:
                     color = (255,255,255)
                     if i != -99:
-                        pygame.draw.line(self.screen,color , ag.getPos(), ag.getPos()+ag.getViewRayDirections()[i]*ag.getViewRange(), 1)
+                        pygame.draw.line(self.canvas,color , ag.getPos(), ag.getPos()+ag.getViewRayDirections()[i]*ag.getViewRange(), 1)
                 elif ranges[i][1] == 0:
                     color = (255,0,0)
                     if i != -99:
-                        pygame.draw.line(self.screen,color , ag.getPos(), ag.getPos()+ag.getViewRayDirections()[i]*ranges[i][0], 1)
+                        pygame.draw.line(self.canvas,color , ag.getPos(), ag.getPos()+ag.getViewRayDirections()[i]*ranges[i][0], 1)
                 else:
                     color = (0,255,0)
                     if i != -99:
-                        pygame.draw.line(self.screen,color , ag.getPos(), ag.getPos()+ag.getViewRayDirections()[i]*ranges[i][0], 1)
+                        pygame.draw.line(self.canvas,color , ag.getPos(), ag.getPos()+ag.getViewRayDirections()[i]*ranges[i][0], 1)
                 
             
             
-            pygame.draw.circle(self.screen, (255, 0, 0), ag.getPos(), ag.getSize()/2)
+            pygame.draw.circle(self.canvas, (255, 0, 0), ag.getPos(), ag.getSize()/2)
             
         for ag in agents:
             if ag.getSpeed() <= 0.4:
-                pygame.draw.circle(self.screen, (0, 255, 0), ag.getPos(), ag.getSize()/2)
+                pygame.draw.circle(self.canvas, (0, 255, 0), ag.getPos(), ag.getSize()/2)
     
     

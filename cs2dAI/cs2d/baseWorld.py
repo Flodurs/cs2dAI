@@ -1,6 +1,6 @@
 #tile based world
 import cs2d.tile
-import cs2d.baseAgent
+import reinforcement.reinforcementLearningAgent
 import numpy as np
 
 import random
@@ -14,7 +14,7 @@ class baseWorld:
         self.aTiles = [[cs2d.tile.tile() for j in range(self.iSize)] for k in range(self.iSize)]
         self.aWalls = []
       
-        self.agents = []
+        self.agents = [reinforcement.reinforcementLearningAgent.reinforcementLearningAgent()]
         
         
    
