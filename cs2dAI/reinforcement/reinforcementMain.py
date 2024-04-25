@@ -1,12 +1,16 @@
 import reinforcement.reinforcementLvl
 import reinforcement.reinforcementLearningAgent
 import playground.playgroundLvl
+import time
+import pygame
+import cs2d.zeichner
 
-
-class playgroundMain:
+class reinforcementMain:
     def __init__(self):
         self.bRunning = True 
-        self.w = playground.playgroundLvl.playgroundLvl()
+        self.w = reinforcement.reinforcementLvl.reinforcementLvl()
+        self.renderer = cs2d.zeichner.zeichner()
+        pygame.init()
 
     def run(self):
         while self.bRunning == True:
@@ -15,6 +19,8 @@ class playgroundMain:
                     self.bRunning = False
             self.update()
             self.render()
+            time.sleep(0.02)
+            
             
     def update(self):
         self.w.update()

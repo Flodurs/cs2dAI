@@ -14,9 +14,9 @@ class baseWorld:
         self.aTiles = [[cs2d.tile.tile() for j in range(self.iSize)] for k in range(self.iSize)]
         self.aWalls = []
       
-        self.agents = [reinforcement.reinforcementLearningAgent.reinforcementLearningAgent()]
+        self.agents = []
         
-        
+        random.seed()
    
         
 
@@ -43,10 +43,10 @@ class baseWorld:
     def updateAgents(self):
         if len(self.agents) <= 0:
             return -1
-            
+        
         for ind,ag in enumerate(self.agents):
             ag.update(self,self.deltaT)
-           
+            
             if ag.getHp() <= 0:
                 return ind
         

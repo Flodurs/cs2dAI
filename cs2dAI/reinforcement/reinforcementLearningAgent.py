@@ -30,10 +30,11 @@ class NeuralNetwork(nn.Module):
 
 
 class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self,pos):
+        super().__init__(pos)
         
-        self.actionNum = 4
+   
+        self.actionNum = 6
         self.inputNum = 6 +self.actionNum
         
         self.epsilon = 0.5
@@ -46,6 +47,8 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
         else "cpu"
         )
         
+        print(self.device)
+        
         self.model = NeuralNetwork(self.inputNum).to(self.device)
         self.criterion = nn.MSELoss()
         self.optimizer = optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
@@ -55,36 +58,29 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
     def think(self,world):
         state = self.getViewList().flatten()
         
-        print(state)
-        
-        print("----------")
-        
-        
-        
         #choose Action
-        
+        action = 0
         
         if random.uniform(0,1) > self.epsilon:
             action = random.randrange(0,self.actionNum)
+            
         else:
             actionInputs = [[0.0 if j != k else 1.0 for j in range(self.actionNum)] for k in range(self.actionNum)]
             moveEval = []
             inputs = np.zeros((self.actionNum,self.inputNum))
             for i,inp in enumerate(actionInputs):
-                print(state)
-                print(np.array(inp))
                 inputs[i] = np.concatenate((state,np.array(inp)))
-            print(actionInputs)
+            
             for i in range(self.actionNum):
                 moveEval.append(self.model(torch.FloatTensor(inputs[i]).to(self.device))[0].cpu().detach().numpy())
                 
-            print("aa")
+          
             action = np.argmax(moveEval)
    
         
         #execute Action
         self.executeAction(action)
-        print("aa")
+       
         
         
         

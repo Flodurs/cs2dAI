@@ -5,14 +5,14 @@ import numpy as np
 import random
 
 class baseAgent:
-    def __init__(self,pos = np.array([400.0,400.0]),rot = 0):
+    def __init__(self,pos):
         random.seed()
         #physics
         self.size = 40
         self.pos = pos
         self.vel = np.array([0.0,0.0])
         self.angularVel = 0
-        self.rotation = rot #[0,2Pi[ 0 facing +y; Pi/2 facing right
+        self.rotation = 0 #[0,2Pi[ 0 facing +y; Pi/2 facing right
         
         self.initPos = np.array([1020,600])
         
@@ -52,7 +52,7 @@ class baseAgent:
         self.shotFlag = 0
         
         self.think(world)
-        
+       
        
 
         
@@ -213,8 +213,8 @@ class baseAgent:
     
     
     #overwwrite with agent Code
-    def think(self,world):
-        pass
+    # def think(self,world):
+        # pass
         
            
          
@@ -286,6 +286,8 @@ class baseAgent:
             
     def executeAction(self,a):
         acc = np.array([0.0,0.0])
+        angAcc = 0
+      
         if a == 0:
             #print("up")
             acc += np.array([0.0,-1.0])
@@ -302,8 +304,17 @@ class baseAgent:
             #print("right")
             acc += np.array([1.0,0.0])
             
+        if a==4:
+            angAcc += 0.1
+            
+        if a==5:
+            angAcc -= 0.1
+            
         self.vel+=np.matmul(np.array([[math.cos(self.rotation),math.sin(self.rotation)],[-math.sin(self.rotation),math.cos(self.rotation)]]),acc)
         self.vel = self.normalize(self.vel)
+        
+        self.angularVel+=angAcc
+        self.angularVel = np.clip(self.angularVel,-1,1)
             
     #---------------------------combat mechanics-------------------------------------------
     
