@@ -4,29 +4,10 @@ import torch
 from torch import nn
 import torch.optim as optim
 import numpy as np
+import reinforcement.qModel
 
 import random
 import time
-
-
-class NeuralNetwork(nn.Module):
-    def __init__(self,inputNum):
-        super().__init__()
-        
-        self.flatten = nn.Flatten()
-        self.linear_relu_stack = nn.Sequential(
-            nn.Linear(inputNum, 10),
-            nn.ReLU(),
-            nn.Linear(10, 10),
-            nn.ReLU(),
-            nn.Linear(10, 1),
-        )
-
-    def forward(self, x):
-        logits = self.linear_relu_stack(x)
-        return logits
-
-
 
 
 class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
@@ -37,56 +18,50 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
         self.actionNum = 6
         self.inputNum = 6 +self.actionNum
         
-        self.epsilon = 0.5
+        self.epsilon = 0.9
         
-        self.device = (
-        "cuda"
-        if torch.cuda.is_available()
-        else "mps"
-        if torch.backends.mps.is_available()
-        else "cpu"
-        )
+        self.q = reinforcement.qModel.qModel(self.inputNum)
+  
         
-        print(self.device)
-        
-        self.model = NeuralNetwork(self.inputNum).to(self.device)
-        self.criterion = nn.MSELoss()
-        self.optimizer = optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
-        
-        actionsperformed = []
+        self.actionsperformed = []
+        self.states = []
         
     def think(self,world):
         state = self.getViewList().flatten()
         
         #choose Action
         action = 0
-        
+        actionInputs = [[0.0 if j != k else 1.0 for j in range(self.actionNum)] for k in range(self.actionNum)]
         if random.uniform(0,1) > self.epsilon:
             action = random.randrange(0,self.actionNum)
             
         else:
-            actionInputs = [[0.0 if j != k else 1.0 for j in range(self.actionNum)] for k in range(self.actionNum)]
+            
             moveEval = []
             inputs = np.zeros((self.actionNum,self.inputNum))
             for i,inp in enumerate(actionInputs):
                 inputs[i] = np.concatenate((state,np.array(inp)))
             
             for i in range(self.actionNum):
-                moveEval.append(self.model(torch.FloatTensor(inputs[i]).to(self.device))[0].cpu().detach().numpy())
+                moveEval.append(self.q.forward(inputs[i]))
                 
           
             action = np.argmax(moveEval)
    
         
-        #execute Action
+        self.states.append(state)
+        self.actionsperformed.append(actionInputs[action])
+        #execute Actions
         self.executeAction(action)
-       
+        
         
         
         
         #update Q-Net on reward
-        
-        
+        if self.pos[1] > 400:
+            self.q.updateModel(self.states,self.actionsperformed,1/len(actionInputs))
+            print("update")
+            self.pos = [200,100]
         
         
         

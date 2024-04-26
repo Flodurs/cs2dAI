@@ -195,7 +195,7 @@ class baseAgent:
 
     def handleCollision(self,world):
         for wall in world.getWalls():
-            if geometry.circleRectIntersect([self.pos[0], self.pos[1],40], wall):
+            if cs2d.geometry.circleRectIntersect([self.pos[0], self.pos[1],40], wall):
                 #self.vel = np.array([0,0])
                 return True
         return False

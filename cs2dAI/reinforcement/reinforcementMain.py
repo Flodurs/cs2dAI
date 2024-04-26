@@ -19,7 +19,7 @@ class reinforcementMain:
                     self.bRunning = False
             self.update()
             self.render()
-            time.sleep(0.02)
+            #time.sleep(0.02)
             
             
     def update(self):
