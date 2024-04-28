@@ -5,6 +5,7 @@ from torch import nn
 import torch.optim as optim
 import numpy as np
 import reinforcement.qModel
+import reinforcement.episode
 
 import random
 import time
@@ -16,56 +17,60 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
         
    
         self.actionNum = 6
-        self.inputNum = 6 +self.actionNum
+        self.inputNum = 8 
         
-        self.epsilon = 0.9
+        self.epsilon = 0.2
         
-        self.q = reinforcement.qModel.qModel(self.inputNum)
+        self.q = reinforcement.qModel.qModel(self.inputNum,self.actionNum)
   
         
-        self.actionsperformed = []
-        self.states = []
+        self.episodes = []
+        self.episodes.append(reinforcement.episode.episode())
         
     def think(self,world):
-        state = self.getViewList().flatten()
+        state = self.getViewList()
+        state = self.processInputs(state)
+        reward = 0
+        done = False
         
         #choose Action
         action = 0
-        actionInputs = [[0.0 if j != k else 1.0 for j in range(self.actionNum)] for k in range(self.actionNum)]
-        if random.uniform(0,1) > self.epsilon:
+       
+        if random.uniform(0,1) < self.epsilon:
             action = random.randrange(0,self.actionNum)
-            
+            #print("Random")
         else:
-            
-            moveEval = []
-            inputs = np.zeros((self.actionNum,self.inputNum))
-            for i,inp in enumerate(actionInputs):
-                inputs[i] = np.concatenate((state,np.array(inp)))
-            
-            for i in range(self.actionNum):
-                moveEval.append(self.q.forward(inputs[i]))
+            action = np.argmax(self.q.forward(state))
                 
-          
-            action = np.argmax(moveEval)
-   
-        
-        self.states.append(state)
-        self.actionsperformed.append(actionInputs[action])
         #execute Actions
         self.executeAction(action)
         
+        newState = self.getViewList()
+        newState = self.processInputs(newState)
         
-        
-        
-        #update Q-Net on reward
         if self.pos[1] > 400:
-            self.q.updateModel(self.states,self.actionsperformed,1/len(actionInputs))
-            print("update")
+            reward = 1
             self.pos = [200,100]
+            self.actionsperformed = []
+            self.states = []
+            self.rotation = 0
+            self.resetPhysics()
+            done = True
+            
+        if self.episodes[-1].getLen() > 1000:
+            reward = 0
+            self.pos = [200,100]
+            self.actionsperformed = []
+            self.states = []
+            self.rotation = 0
+            self.resetPhysics()
+            done = True
+        
+        self.q.updateReplayMemory([state,action,reward,newState,done])
+        self.q.train(done)
         
         
         
-        
-        
-        
+       
+      
         

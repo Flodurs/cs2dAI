@@ -206,6 +206,10 @@ class baseAgent:
             directions.append(cs2d.geometry.angleToVec(self.rotation+angle))
         return directions
         
+    def resetPhysics(self):
+        self.vel = np.array([0.0,0.0])
+        self.angularVel = 0
+        
     #--------------------------------------------------AI-----------------------------------------------------
     #netStructure 5 input neurons: distances mapped to [0,1]
     #6 output neurons: up,down,left,right, turn+, turn-
@@ -234,11 +238,11 @@ class baseAgent:
             
         processedInputs.append(np.linalg.norm(self.pos-np.array([400,400]))/600)
          
-        processedInputs.append(1.0)
+    
         
         
         
-        #print(processedInputs)
+        #print(len(processedInputs))
         return processedInputs
         
     def actFromOutputs(self,outputs,world):
@@ -352,3 +356,6 @@ class baseAgent:
         if norm == 0: 
             return v
         return v / norm
+        
+        
+     
