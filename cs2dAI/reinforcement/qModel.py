@@ -11,11 +11,11 @@ class NeuralNetwork(nn.Module):
         
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(inputNum+1, 60),
+            nn.Linear(inputNum+1, 50),
             nn.ReLU(),
-            nn.Linear(60, 60),
+            nn.Linear(50, 50),
             nn.ReLU(),
-            nn.Linear(60, outputNum),
+            nn.Linear(50, outputNum),
         )
 
     def forward(self, x):
@@ -27,7 +27,7 @@ class qModel:
     
         self.REPLAY_MEMORY_SIZE = 50000
         self.MIN_REPLAY_MEMORY_SIZE = 1000
-        self.MINI_BATCH_SIZE = 64
+        self.MINI_BATCH_SIZE = 32
         self.DISCOUNT = 0.99
         self.UPDATE_TARGET_INTERVAL = 5
       
@@ -147,23 +147,23 @@ class qModel:
             
             y.append(currentQs)
             
-            
-        print(x)
-        print(y)
-        
+       
         self.optimizer.zero_grad()
-        loss = self.criterion(torch.FloatTensor(currentQsList[i]), torch.FloatTensor(y))
+        loss = self.criterion(torch.FloatTensor(currentQsList[i]), torch.FloatTensor(y[i]))
+        loss.requires_grad = True
         loss.backward()
         self.optimizer.step()
-       
-        if terminalState:
-            self.targetUpdateCounter += 1
+        
+        
+      
+        
         
         if self.targetUpdateCounter > self.UPDATE_TARGET_INTERVAL:
             self.targetModel.load_state_dict(self.model.state_dict())
             self.targetUpdateCounter = 0
     
-    
+    def incTargetUpdateCounter(self):
+        self.targetUpdateCounter+=1
     
     
     

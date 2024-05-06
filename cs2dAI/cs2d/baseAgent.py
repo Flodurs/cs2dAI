@@ -236,8 +236,8 @@ class baseAgent:
         if self.rotation < 0:
             processedInputs.append(-math.fmod(self.rotation,2*math.pi))
             
-        processedInputs.append(np.linalg.norm(self.pos-np.array([400,400]))/600)
-         
+        processedInputs.append(self.pos[0]/800)
+        processedInputs.append(self.pos[1]/800)
     
         
         
