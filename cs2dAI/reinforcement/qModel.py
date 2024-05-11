@@ -11,11 +11,11 @@ class NeuralNetwork(nn.Module):
         
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(inputNum+1, 50),
+            nn.Linear(inputNum+1, 100),
             nn.ReLU(),
-            nn.Linear(50, 50),
+            nn.Linear(100, 100),
             nn.ReLU(),
-            nn.Linear(50, outputNum),
+            nn.Linear(100, outputNum),
         )
 
     def forward(self, x):
@@ -157,15 +157,16 @@ class qModel:
         
       
         
-        
+
         if self.targetUpdateCounter > self.UPDATE_TARGET_INTERVAL:
             self.targetModel.load_state_dict(self.model.state_dict())
             self.targetUpdateCounter = 0
+            print("up")
     
+            
     def incTargetUpdateCounter(self):
         self.targetUpdateCounter+=1
-    
-    
+        
     
     
     

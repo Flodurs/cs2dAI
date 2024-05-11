@@ -25,7 +25,7 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
         self.lP = common.livePlot.livePlot()
         
         self.START_EPSILON = 0.1
-        self.END_EPSILON = 0.001
+        self.END_EPSILON = 0.0001
         self.DECAY_EPSILON = 0.0001
         
         self.epsilon = self.START_EPSILON
@@ -119,7 +119,7 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
             if self.epsilon > self.END_EPSILON:
                 self.epsilon -= self.DECAY_EPSILON
             
-        if done:
+        if self.globalStep%100 == 0:
             self.q.incTargetUpdateCounter()
         
         self.q.updateReplayMemory([totalState,action,reward,newState,done])
