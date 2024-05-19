@@ -26,7 +26,11 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
         
         self.START_EPSILON = 0.1
         self.END_EPSILON = 0.0001
-        self.DECAY_EPSILON = 0.0001
+        self.DECAY_EPSILON = 0.99
+        self.PAST_STATES_NUM = 10
+        
+        
+        
         
         self.epsilon = self.START_EPSILON
         
@@ -42,6 +46,8 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
         self.rewardHistory = []
         
         self.lastState = [0 for i in range(9)]
+        #self.pastStates = deque(maxlen=self.PAST_STATES_NUM)
+        self.lastReward = 0
         
         
         
@@ -99,7 +105,7 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
             self.lP.drawAvgLast()
             
             if self.epsilon > self.END_EPSILON:
-                self.epsilon -= self.DECAY_EPSILON
+                self.epsilon *= self.DECAY_EPSILON
             
         if self.step > 500:
             self.step = 0
@@ -117,16 +123,18 @@ class reinforcementLearningAgent(cs2d.baseAgent.baseAgent):
             self.lP.drawAvgLast()
            
             if self.epsilon > self.END_EPSILON:
-                self.epsilon -= self.DECAY_EPSILON
+                self.epsilon *= self.DECAY_EPSILON
+                
+        
             
         if self.globalStep%100 == 0:
             self.q.incTargetUpdateCounter()
         
-        self.q.updateReplayMemory([totalState,action,reward,newState,done])
-        if self.globalStep%5 == 0:
+        self.q.updateReplayMemory([totalState,action,self.lastReward,newState,done])
+        if self.globalStep%2 == 0:
             self.q.train(done)
         
-        
+        self.lastReward = reward
         
        
       

@@ -1,11 +1,11 @@
 import cs2d.baseWorld
-import reinforcement.reinforcementLearningAgent
+import reinforcement.reinforcementLearningAgent2
 import numpy as np
 
 class reinforcementLvl(cs2d.baseWorld.baseWorld):
     def __init__(self):
         super().__init__()
-        self.agents.append(reinforcement.reinforcementLearningAgent.reinforcementLearningAgent(np.array([200.0,100.0])))
+        self.agents.append(reinforcement.reinforcementLearningAgent2.reinforcementLearningAgent2(np.array([200.0,100.0])))
         #self.agents.append(reinforcement.reinforcementLearningAgent.reinforcementLearningAgent(np.array([200.0,100.0])))
         self.aWalls.append([200,200,400,100])
         self.aWalls.append([200,500,400,100])
